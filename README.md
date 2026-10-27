@@ -38,8 +38,18 @@ Review a saved report before sharing it. [Synthetic text](examples/report.txt) a
 | `-Protocol` | `Both`, `TCP`, `UDP` | `Both` |
 | `-AddressFamily` | `Both`, `IPv4`, `IPv6` | `Both` |
 | `-Format` | `Text`, `Json` | `Text` |
+| `-Explain` | Add detailed guidance and Microsoft references | Off |
 
 Reports go to standard output. JSON output contains the report, with diagnostics kept separate. Missing or invalid arguments produce a usage error without an interactive prompt.
+
+Use `-Explain` to add an interpretation and next steps for each finding, without additional collection or privileges:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\port-doctor.ps1 -Port 8888 -Explain
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\port-doctor.ps1 -Port 8888 -Format Json -Explain
+```
+
+JSON gains an optional `explanations` array only when this switch is used. Guidance is static, runs locally, and links to official Microsoft documentation; it does not guess the owner of an exclusion or apply fixes.
 
 | Exit code | Meaning |
 | --- | --- |

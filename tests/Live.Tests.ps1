@@ -24,3 +24,10 @@ Test-Case 'Live CLI returns only a parseable JSON report and a truthful exit cod
     $expectedExit = if ($report.completeness -eq 'complete') { 0 } else { 1 }
     Assert-Equal $expectedExit $result.ExitCode
 }
+Test-Case 'Live Explain CLI adds guidance to a valid JSON report' {
+    $result = Invoke-TestCli '-Port 8888 -Protocol TCP -AddressFamily IPv4 -Format Json -Explain'
+    Assert-True ($result.ExitCode -in @(0, 1)); Assert-Equal '' $result.Error
+    $report = $result.Output | ConvertFrom-Json
+    Assert-True ($report.explanations -is [array])
+    Assert-True (@($report.explanations).Count -gt 0)
+}
