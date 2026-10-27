@@ -1,6 +1,6 @@
 # Windows Port Doctor
 
-Read-only diagnostics for a local Windows port. Collect TCP/UDP endpoints, process ownership, Windows excluded and dynamic port ranges, and visible WSL/Docker context in one text or JSON report.
+Read-only diagnostics for a local Windows port. Collect TCP/UDP endpoints, process ownership, Windows excluded and dynamic port ranges, and visible WSL/Docker context in one text, JSON, or Markdown report.
 
 Use it when an application cannot open a port and checking listening processes alone does not explain why. The report records observations and collection gaps; it cannot prove that a port is **FREE** or that your application can bind it.
 
@@ -37,7 +37,7 @@ Review a saved report before sharing it. [Synthetic text](examples/report.txt) a
 | `-Port` | One integer, `1` through `65535` | Required |
 | `-Protocol` | `Both`, `TCP`, `UDP` | `Both` |
 | `-AddressFamily` | `Both`, `IPv4`, `IPv6` | `Both` |
-| `-Format` | `Text`, `Json` | `Text` |
+| `-Format` | `Text`, `Json`, `Markdown` | `Text` |
 | `-Explain` | Add detailed guidance and Microsoft references | Off |
 
 Reports go to standard output. JSON output contains the report, with diagnostics kept separate. Missing or invalid arguments produce a usage error without an interactive prompt.
@@ -50,6 +50,14 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\port-doctor.ps1 -Port 
 ```
 
 JSON gains an optional `explanations` array only when this switch is used. Guidance is static, runs locally, and links to official Microsoft documentation; it does not guess the owner of an exclusion or apply fixes.
+
+Generate a support-issue report with tables and optional explanations:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\port-doctor.ps1 -Port 8888 -Format Markdown -Explain > report.md
+```
+
+[Synthetic Markdown example](examples/report.md). Table cells escape Markdown separators, inline markup, HTML tags, and line breaks. Output contains the same normalized observations and collection gaps as JSON; it does not include raw command output. Review the result before attaching it to an issue.
 
 | Exit code | Meaning |
 | --- | --- |

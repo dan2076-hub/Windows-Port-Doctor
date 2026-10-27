@@ -43,3 +43,26 @@ Test-Case 'Explain ignores irrelevant private fields and handles unknown finding
     $unknown = @($explained.explanations | Where-Object code -eq FUTURE_FINDING)[0]
     Assert-True ($unknown.meaning -match 'undetermined')
 }
+Test-Case 'Markdown escapes table separators, backticks, markup and line breaks' {
+    $evidence = New-TestEvidence
+    $evidence.Tcp.Items = @((New-TestEndpoint)); $evidence.Processes.Items = @(New-TestProcesses)
+    $evidence.Processes.Items[0].Name = "test|``<tag>`nsecond.exe"
+    $report = Add-PortDoctorExplanation -Report (ConvertTo-PortDiagnostic -Port 8888 -Evidence $evidence)
+    $markdown = ConvertTo-PortDoctorMarkdown -Report $report
+    Assert-True ($markdown -match 'test&#124;&#96;&lt;tag&gt;<br>second\.exe')
+    Assert-True ($markdown -match '^# Windows Port Doctor')
+    Assert-True ($markdown -match '## Explanations')
+    Assert-True ($markdown -notmatch '<tag>')
+}
+Test-Case 'Markdown supports zero, one and many endpoints without leaking private fields' {
+    foreach ($count in @(0, 1, 3)) {
+        $evidence = New-TestEvidence
+        $evidence.Tcp.Items = @(1..$count | Where-Object { $count -gt 0 } | ForEach-Object { New-TestEndpoint -Address '192.0.2.15' })
+        $evidence | Add-Member NoteProperty Username 'PRIVATE_MARKDOWN_SENTINEL'
+        $report = ConvertTo-PortDiagnostic -Port 8888 -Evidence $evidence
+        $markdown = ConvertTo-PortDoctorMarkdown -Report $report
+        Assert-True ($markdown -notmatch 'PRIVATE_MARKDOWN_SENTINEL|192\.0\.2\.15')
+        Assert-True ($markdown -match 'Bind availability was not tested')
+        Assert-True ($markdown -match '## Evidence sources')
+    }
+}

@@ -75,4 +75,71 @@ function Add-PortDoctorExplanation {
     $copy
 }
 
-Export-ModuleMember -Function ConvertTo-PortDoctorText, ConvertTo-PortDoctorJson, Add-PortDoctorExplanation
+function ConvertTo-MarkdownCell {
+    param($Value)
+    if ($null -eq $Value) { return 'unknown' }
+    $text = [string]$Value
+    $text = $text.Replace('&', '&amp;').Replace('<', '&lt;').Replace('>', '&gt;')
+    $text = $text.Replace('|', '&#124;').Replace('`', '&#96;').Replace('\', '&#92;')
+    $text = $text.Replace('*', '&#42;').Replace('_', '&#95;').Replace('[', '&#91;').Replace(']', '&#93;')
+    $text -replace '\r\n|\r|\n', '<br>'
+}
+
+function ConvertTo-PortDoctorMarkdown {
+    [CmdletBinding()]
+    param($Report)
+    $lines = New-Object 'Collections.Generic.List[string]'
+    $lines.Add('# Windows Port Doctor')
+    $lines.Add('')
+    $lines.Add('Port **' + $Report.request.port + '** | ' + $Report.request.protocol + ' | ' + $Report.request.address_family)
+    $lines.Add('')
+    $lines.Add('Collection: **' + $Report.completeness + '**. Data: ' + $Report.data_kind + '. Snapshot: ' + $Report.generated_at_utc + '.')
+    $lines.Add(''); $lines.Add('## Findings'); $lines.Add('')
+    foreach ($finding in @($Report.findings)) { $lines.Add('- **' + (ConvertTo-MarkdownCell $finding.code) + '**: ' + (ConvertTo-MarkdownCell $finding.message)) }
+    $lines.Add(''); $lines.Add('## Endpoints'); $lines.Add('')
+    if (@($Report.endpoints).Count -eq 0) { $lines.Add('No matching endpoints in the collected data; this is not a bind guarantee.') }
+    else {
+        $lines.Add('| Protocol | Family | Address | State | Process chain (child to parent) |')
+        $lines.Add('| --- | --- | --- | --- | --- |')
+        foreach ($endpoint in @($Report.endpoints)) {
+            $chain = @($endpoint.process_chain | ForEach-Object {
+                if ($_.verified) { [string]$_.name + ' (' + $_.process_id + ')' }
+                else { 'unknown (' + $_.process_id + '; ' + $_.reason + ')' }
+            }) -join ' <- '
+            $cells = @($endpoint.protocol, $endpoint.address_family, $endpoint.address, $endpoint.state, $chain) | ForEach-Object { ConvertTo-MarkdownCell $_ }
+            $lines.Add('| ' + ($cells -join ' | ') + ' |')
+        }
+    }
+    $lines.Add(''); $lines.Add('## Ranges and registry context'); $lines.Add('')
+    $lines.Add('| Family | Protocol | Exclusion collection | Matching exclusions | Dynamic range |')
+    $lines.Add('| --- | --- | --- | --- | --- |')
+    foreach ($range in @($Report.ranges)) {
+        $excluded = @($range.matching_excluded_ranges | ForEach-Object { [string]$_.start + '-' + $_.end + $(if ($_.administered) { ' (administered)' } else { '' }) }) -join ', '
+        if ($excluded -eq '') { $excluded = 'None observed' }
+        $dynamic = if ($null -eq $range.dynamic) { $range.dynamic_status } else { [string]$range.dynamic.start + '-' + $range.dynamic.end }
+        $cells = @($range.address_family, $range.protocol, $range.excluded_status, $excluded, $dynamic) | ForEach-Object { ConvertTo-MarkdownCell $_ }
+        $lines.Add('| ' + ($cells -join ' | ') + ' |')
+    }
+    $lines.Add('')
+    $lines.Add('MaxUserPort: ' + (ConvertTo-MarkdownCell $Report.registry.max_user_port) + ' (registry context, not a replacement for the active dynamic range).')
+    $lines.Add(''); $lines.Add('## Evidence sources'); $lines.Add('')
+    $lines.Add('| Source | Status | Error category |'); $lines.Add('| --- | --- | --- |')
+    foreach ($source in @($Report.sources)) {
+        $cells = @($source.id, $source.status, $source.error_code) | ForEach-Object { ConvertTo-MarkdownCell $_ }
+        $lines.Add('| ' + ($cells -join ' | ') + ' |')
+    }
+    if ($null -ne $Report.PSObject.Properties['explanations']) {
+        $lines.Add(''); $lines.Add('## Explanations'); $lines.Add('')
+        foreach ($item in @($Report.explanations)) {
+            $lines.Add('### ' + (ConvertTo-MarkdownCell $item.code)); $lines.Add('')
+            $lines.Add((ConvertTo-MarkdownCell $item.meaning)); $lines.Add('')
+            $lines.Add('Next: ' + (ConvertTo-MarkdownCell $item.next_steps)); $lines.Add('')
+            $lines.Add('Reference: ' + (ConvertTo-MarkdownCell $item.documentation_url)); $lines.Add('')
+        }
+    }
+    $lines.Add('')
+    $lines.Add('Bind availability was not tested. No application or service was stopped and no system setting was changed.')
+    $lines -join [Environment]::NewLine
+}
+
+Export-ModuleMember -Function ConvertTo-PortDoctorText, ConvertTo-PortDoctorJson, Add-PortDoctorExplanation, ConvertTo-PortDoctorMarkdown

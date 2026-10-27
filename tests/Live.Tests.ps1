@@ -31,3 +31,9 @@ Test-Case 'Live Explain CLI adds guidance to a valid JSON report' {
     Assert-True ($report.explanations -is [array])
     Assert-True (@($report.explanations).Count -gt 0)
 }
+Test-Case 'Live Markdown CLI returns a support report' {
+    $result = Invoke-TestCli '-Port 8888 -Protocol TCP -AddressFamily IPv4 -Format Markdown -Explain'
+    Assert-True ($result.ExitCode -in @(0, 1)); Assert-Equal '' $result.Error
+    Assert-True ($result.Output -match '^# Windows Port Doctor')
+    Assert-True ($result.Output -match '## Evidence sources')
+}
