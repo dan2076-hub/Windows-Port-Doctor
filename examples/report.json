@@ -1,0 +1,202 @@
+{
+    "schema_version":  1,
+    "tool":  {
+                 "name":  "Windows Port Doctor",
+                 "version":  "0.1.0"
+             },
+    "generated_at_utc":  "2026-01-01T12:00:00.0000000Z",
+    "data_kind":  "synthetic",
+    "request":  {
+                    "port":  8888,
+                    "protocol":  "Both",
+                    "address_family":  "Both"
+                },
+    "completeness":  "complete",
+    "sources":  [
+                    {
+                        "id":  "processes",
+                        "status":  "ok",
+                        "error_code":  null
+                    },
+                    {
+                        "id":  "services",
+                        "status":  "ok",
+                        "error_code":  null
+                    },
+                    {
+                        "id":  "registry",
+                        "status":  "ok",
+                        "error_code":  null
+                    },
+                    {
+                        "id":  "tcp_endpoints",
+                        "status":  "ok",
+                        "error_code":  null
+                    },
+                    {
+                        "id":  "udp_endpoints",
+                        "status":  "ok",
+                        "error_code":  null
+                    },
+                    {
+                        "id":  "ipv4_tcp_excluded",
+                        "status":  "ok",
+                        "error_code":  null
+                    },
+                    {
+                        "id":  "ipv4_tcp_dynamic",
+                        "status":  "ok",
+                        "error_code":  null
+                    },
+                    {
+                        "id":  "ipv4_udp_excluded",
+                        "status":  "ok",
+                        "error_code":  null
+                    },
+                    {
+                        "id":  "ipv4_udp_dynamic",
+                        "status":  "ok",
+                        "error_code":  null
+                    },
+                    {
+                        "id":  "ipv6_tcp_excluded",
+                        "status":  "ok",
+                        "error_code":  null
+                    },
+                    {
+                        "id":  "ipv6_tcp_dynamic",
+                        "status":  "ok",
+                        "error_code":  null
+                    },
+                    {
+                        "id":  "ipv6_udp_excluded",
+                        "status":  "ok",
+                        "error_code":  null
+                    },
+                    {
+                        "id":  "ipv6_udp_dynamic",
+                        "status":  "ok",
+                        "error_code":  null
+                    }
+                ],
+    "endpoints":  [
+                      {
+                          "protocol":  "TCP",
+                          "address_family":  "IPv4",
+                          "address":  "127.0.0.1",
+                          "address_kind":  "loopback",
+                          "state":  "Listen",
+                          "process_id":  100,
+                          "process_name":  "python.exe",
+                          "process_chain":  [
+                                                {
+                                                    "process_id":  100,
+                                                    "name":  "python.exe",
+                                                    "verified":  true,
+                                                    "reason":  "observed"
+                                                },
+                                                {
+                                                    "process_id":  200,
+                                                    "name":  "launcher.exe",
+                                                    "verified":  true,
+                                                    "reason":  "observed"
+                                                }
+                                            ]
+                      }
+                  ],
+    "ranges":  [
+                   {
+                       "address_family":  "IPv4",
+                       "protocol":  "TCP",
+                       "excluded_status":  "ok",
+                       "observed_excluded_range_count":  1,
+                       "matching_excluded_ranges":  [
+                                                        {
+                                                            "start":  8800,
+                                                            "end":  8899,
+                                                            "administered":  true
+                                                        }
+                                                    ],
+                       "dynamic_status":  "ok",
+                       "dynamic":  {
+                                       "start":  49152,
+                                       "count":  16384,
+                                       "end":  65535,
+                                       "contains_port":  false
+                                   }
+                   },
+                   {
+                       "address_family":  "IPv4",
+                       "protocol":  "UDP",
+                       "excluded_status":  "ok",
+                       "observed_excluded_range_count":  0,
+                       "matching_excluded_ranges":  [
+
+                                                    ],
+                       "dynamic_status":  "ok",
+                       "dynamic":  {
+                                       "start":  49152,
+                                       "count":  16384,
+                                       "end":  65535,
+                                       "contains_port":  false
+                                   }
+                   },
+                   {
+                       "address_family":  "IPv6",
+                       "protocol":  "TCP",
+                       "excluded_status":  "ok",
+                       "observed_excluded_range_count":  0,
+                       "matching_excluded_ranges":  [
+
+                                                    ],
+                       "dynamic_status":  "ok",
+                       "dynamic":  {
+                                       "start":  49152,
+                                       "count":  16384,
+                                       "end":  65535,
+                                       "contains_port":  false
+                                   }
+                   },
+                   {
+                       "address_family":  "IPv6",
+                       "protocol":  "UDP",
+                       "excluded_status":  "ok",
+                       "observed_excluded_range_count":  0,
+                       "matching_excluded_ranges":  [
+
+                                                    ],
+                       "dynamic_status":  "ok",
+                       "dynamic":  {
+                                       "start":  49152,
+                                       "count":  16384,
+                                       "end":  65535,
+                                       "contains_port":  false
+                                   }
+                   }
+               ],
+    "registry":  {
+                     "status":  "ok",
+                     "max_user_port":  65534,
+                     "kind":  "DWord"
+                 },
+    "context":  {
+                    "wsl_evidence":  [
+
+                                     ],
+                    "docker_evidence":  [
+
+                                        ]
+                },
+    "findings":  [
+                     {
+                         "code":  "TCP_LISTENER",
+                         "severity":  "info",
+                         "message":  "TCP Listen observed on 127.0.0.1:8888 (PID 100)."
+                     },
+                     {
+                         "code":  "EXCLUDED_RANGE",
+                         "severity":  "notice",
+                         "message":  "Port appears in an excluded IPv4 TCP range 8800-8899. Ownership and bind availability are not established."
+                     }
+                 ]
+}

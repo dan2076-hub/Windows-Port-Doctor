@@ -1,0 +1,33 @@
+Windows Port Doctor 0.1.0
+Port: 8888 | Protocol: Both | Address family: Both
+Collection: complete | Data: synthetic
+
+[TCP_LISTENER] TCP Listen observed on 127.0.0.1:8888 (PID 100).
+[EXCLUDED_RANGE] Port appears in an excluded IPv4 TCP range 8800-8899. Ownership and bind availability are not established.
+
+Processes (observed snapshot):
+  TCP IPv4 127.0.0.1 Listen: python.exe (100) <- launcher.exe (200)
+
+Port ranges:
+  IPv4 TCP: excluded=ok; dynamic=49152-65535
+  IPv4 UDP: excluded=ok; dynamic=49152-65535
+  IPv6 TCP: excluded=ok; dynamic=49152-65535
+  IPv6 UDP: excluded=ok; dynamic=49152-65535
+MaxUserPort: 65534 (registry context; active dynamic ranges are listed above)
+
+Evidence sources:
+  processes: ok
+  services: ok
+  registry: ok
+  tcp_endpoints: ok
+  udp_endpoints: ok
+  ipv4_tcp_excluded: ok
+  ipv4_tcp_dynamic: ok
+  ipv4_udp_excluded: ok
+  ipv4_udp_dynamic: ok
+  ipv6_tcp_excluded: ok
+  ipv6_tcp_dynamic: ok
+  ipv6_udp_excluded: ok
+  ipv6_udp_dynamic: ok
+
+Bind availability was not tested. No application or service was stopped and no system setting was changed.

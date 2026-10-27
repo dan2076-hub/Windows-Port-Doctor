@@ -1,0 +1,33 @@
+# Private live reports and local diagnostics. Public examples are synthetic.
+/report.*
+/reports/
+/private/
+/local/
+/artifacts/
+/TestResults/
+*.log
+*.trace
+*.dmp
+*.clixml
+*.transcript.txt
+
+# Credentials and local configuration
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.p12
+*credentials*
+*secrets*
+
+# Editor and operating system files
+.vscode/
+.idea/
+*.user
+*.swp
+*.tmp
+*~
+Thumbs.db
+Desktop.ini
+.DS_Store

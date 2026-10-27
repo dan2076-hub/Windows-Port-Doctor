@@ -1,0 +1,9 @@
+{
+  "description": "Synthetic netsh structure examples; not captured host output. Localized labels exercise language independence.",
+  "excludedEmpty": "Protocol tcp Port Exclusion Ranges\r\n\r\nStart Port    End Port\r\n----------    --------\r\n\r\n* - Administered port exclusions.\r\n",
+  "excludedOne": "Protocol tcp Port Exclusion Ranges\nStart Port    End Port\n----------    --------\n8000    8010    *\n",
+  "excludedMany": "Protocol udp Port Exclusion Ranges\nStart Port    End Port\n----------    --------\n1    1\n8000    8010    *\n65535    65535\n* - Administered port exclusions.\n",
+  "excludedLocalized": "\u041f\u0440\u043e\u0442\u043e\u043a\u043e\u043b tcp\r\n\r\n\u041d\u0430\u0447\u0430\u043b\u043e    \u041a\u043e\u043d\u0435\u0446\r\n----------    --------\r\n\t8000\t8010 *\r\n* - \u0418\u0441\u043a\u043b\u044e\u0447\u0435\u043d\u0438\u044f.\r\n",
+  "dynamic": "Protocol tcp Dynamic Port Range\r\n---------------------------------\r\nStart Port      : 49152\r\nNumber of Ports : 16384\r\n",
+  "dynamicLocalized": "\u041f\u0440\u043e\u0442\u043e\u043a\u043e\u043b udp\n--------------------\n\u041d\u0430\u0447\u0430\u043b\u043e : 1024\n\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e : 64511\n"
+}
